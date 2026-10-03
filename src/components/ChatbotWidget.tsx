@@ -24,9 +24,14 @@ interface ChatMessage {
   sources?: { title: string; type: string }[];
   isFound?: boolean;
   timestamp: string;
+  isAgriMissionPrompt?: boolean;
 }
 
-export const ChatbotWidget: React.FC = () => {
+interface ChatbotWidgetProps {
+  onLaunchMission?: (goal?: string) => void;
+}
+
+export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({ onLaunchMission }) => {
   const { t, language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [inputQuery, setInputQuery] = useState("");
@@ -73,6 +78,48 @@ export const ChatbotWidget: React.FC = () => {
     setIsTyping(true);
 
     try {
+      // Check if query is agricultural sales goal
+      const qLower = query.toLowerCase();
+      const isGoalQuery =
+        qLower.includes("buyer") ||
+        qLower.includes("sell") ||
+        qLower.includes("விற்க") ||
+        qLower.includes("வாங்குபவர்") ||
+        qLower.includes("கொள்முதல்");
+
+      if (
+        isGoalQuery &&
+        (qLower.includes("find") ||
+          qLower.includes("rice") ||
+          qLower.includes("kg") ||
+          qLower.includes("wheat") ||
+          qLower.includes("crop") ||
+          qLower.includes("நெல்") ||
+          qLower.includes("கோதுமை") ||
+          qLower.includes("பயிர்") ||
+          qLower.includes("தக்காளி") ||
+          qLower.includes("tomato"))
+      ) {
+        const botMessage: ChatMessage = {
+          id: `bot-${Date.now()}`,
+          sender: "bot",
+          text:
+            language === "ta"
+              ? "பொருத்தமான வாங்குபவர்களைக் கண்டறிய நான் ஒரு அக்ரிமிஷன் (AgriMission) பணியை உருவாக்க முடியும். அக்ரிமிஷன் ஏஜென்ட் நிகர வருவாய், சரக்குக் கட்டணம், காலக்கெடு மற்றும் வாங்குபவரின் நம்பகத்தன்மையை முழுமையாக ஆராய்ந்து செயல் திட்டங்களை வழங்கும்."
+              : "I can create an AgriMission to evaluate suitable buyers with multi-constraint planning. Rather than blindly matching by headline price, the AgriMission Agent computes net farmer realization, freight tariffs, delivery deadlines, and buyer default risks before executing any action.",
+          sources: [
+            { title: "AgriMission Decision Layer", type: "Multi-Agent System" },
+            { title: "APMC Mandi Price Benchmarks", type: "Market Data" },
+          ],
+          isFound: true,
+          isAgriMissionPrompt: true,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        };
+        setMessages((prev) => [...prev, botMessage]);
+        setIsTyping(false);
+        return;
+      }
+
       // Execute RAG query
       const ragResponse: ChatResponse = await queryRAG(query, language);
 
@@ -242,6 +289,25 @@ export const ChatbotWidget: React.FC = () => {
                           </span>
                         ))}
                       </div>
+                    </div>
+                  )}
+
+                  {msg.isAgriMissionPrompt && onLaunchMission && (
+                    <div className="pt-2">
+                      <button
+                        onClick={() => {
+                          setIsOpen(false);
+                          onLaunchMission();
+                        }}
+                        className="w-full py-2 px-3 rounded-xl bg-theme-primary text-theme-bg font-extrabold text-xs hover:bg-theme-primary-hover transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>
+                          {language === "ta"
+                            ? "🚀 அக்ரிமிஷன் பணி கட்டுப்பாட்டைத் தொடங்கு"
+                            : "🚀 Launch AgriMission Workflow"}
+                        </span>
+                      </button>
                     </div>
                   )}
 

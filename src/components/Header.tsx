@@ -39,6 +39,8 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navItems = [
     { id: "home", labelKey: "nav.home" },
+    { id: "missionControl", labelKey: "nav.missionControl", badge: "Agent" },
+    { id: "evaluationLab", labelKey: "nav.evaluationLab", badge: "Lab" },
     { id: "about", labelKey: "nav.about" },
     { id: "blog", labelKey: "nav.blog" },
     { id: "agNews", labelKey: "nav.agNews" },
@@ -91,13 +93,30 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 ${
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 flex items-center gap-1.5 ${
                     isActive
                       ? "bg-theme-primary text-theme-bg shadow-sm"
+                      : item.id === "missionControl"
+                      ? "text-theme-primary bg-theme-primary/10 hover:bg-theme-primary/20"
+                      : item.id === "evaluationLab"
+                      ? "text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20"
                       : "text-theme-muted hover:text-theme-text hover:bg-theme-surface"
                   }`}
                 >
-                  {t(item.labelKey)}
+                  <span>{t(item.labelKey)}</span>
+                  {item.badge && (
+                    <span
+                      className={`text-[9px] font-black uppercase px-1.5 py-0.2 rounded ${
+                        isActive
+                          ? "bg-black/20 text-white"
+                          : item.id === "missionControl"
+                          ? "bg-theme-primary/20 text-theme-primary"
+                          : "bg-cyan-500/20 text-cyan-400"
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
