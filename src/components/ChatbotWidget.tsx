@@ -163,7 +163,7 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({ onLaunchMission })
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 select-none">
+    <div className="fixed bottom-24 right-5 sm:bottom-5 sm:right-56 z-40 select-none">
       {/* Floating Toggle Button */}
       {!isOpen && (
         <button

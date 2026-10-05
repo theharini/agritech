@@ -23,6 +23,7 @@ import { AboutSection } from "@/components/AboutSection";
 import { ServicesSection } from "@/components/ServicesSection";
 import { AuthModal } from "@/components/AuthModal";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
+import { AgriBotVoiceAssistant } from "@/components/agribot/AgriBotVoiceAssistant";
 import { MissionControlDashboard } from "@/components/mission/MissionControlDashboard";
 import { EvaluationLabView } from "@/components/evaluation/EvaluationLabView";
 import { Sparkles, ArrowRight, ShieldCheck, Cpu } from "lucide-react";
@@ -175,6 +176,9 @@ export default function Home() {
 
       {/* Embedded RAG Floating Chatbot Widget (Present on All Pages) */}
       <ChatbotWidget onLaunchMission={() => setActiveTab("missionControl")} />
+
+      {/* Multilingual Voice Advisory Assistant (Gemini 2.5 Flash) */}
+      <AgriBotVoiceAssistant />
 
       {/* Fertilizer Recommendation Calculator Modal */}
       <FertilizerRecommendationModal
